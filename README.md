@@ -1,4 +1,4 @@
 # EdTech Platform — studySphere
 
-Track students, manage users, and learn with our full-stack app.
+Empower young children, manage your account, and learn with our full-stack app.
 
