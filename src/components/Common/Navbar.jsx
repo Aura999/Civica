@@ -44,7 +44,8 @@ function Navbar() {
       setLoading(true)
       try {
         const res = await apiConnector("GET", categories.CATEGORIES_API)
-        setSubLinks(res.data.data)
+        console.log("API RESPONSE:", res.data);
+        setSubLinks(res?.data?.data);
         
       } catch (error) {
         console.log("Could not fetch Categories.", error)
@@ -53,7 +54,9 @@ function Navbar() {
     })()
   }, [])
 
+  
    console.log("sub links", subLinks)
+   console.log("Api calling", categories.CATEGORIES_API)
 
   const matchRoute = (route) => {
     return matchPath({ path: route }, location.pathname)

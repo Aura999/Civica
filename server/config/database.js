@@ -4,6 +4,7 @@ require("dotenv").config();
 const { MONGODB_URL } = process.env;
 
 exports.connect = () => {
+	console.log("mongo db url is -->", MONGODB_URL)
 	mongoose
 		.connect(MONGODB_URL, {
 			useNewUrlparser: true,
