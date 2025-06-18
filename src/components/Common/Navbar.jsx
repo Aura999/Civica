@@ -3,8 +3,9 @@ import { AiOutlineMenu, AiOutlineShoppingCart } from "react-icons/ai"
 import { BsChevronDown } from "react-icons/bs"
 import { useSelector } from "react-redux"
 import { Link, matchPath, useLocation } from "react-router-dom"
+import HighlightText from "../core/HomePage/HighlightText"
 
-import logo from "../../assets/Logo/Logo-Full-Light.png"
+//import logo from "../../assets/Logo/Logo-Full-Light.png"
 import { NavbarLinks } from "../../data/navbar-links"
 import { apiConnector } from "../../services/apiConnector"
 import { categories } from "../../services/apis"
@@ -70,8 +71,8 @@ function Navbar() {
     >
       <div className="flex w-11/12 max-w-maxContent items-center justify-between">
         {/* Logo */}
-        <Link to="/">
-          <img src={logo} alt="Logo" width={160} height={32} loading="lazy" />
+        <Link to="/" className="text-2xl"> 
+          <HighlightText text={"Civica"} fontSize  />
         </Link>
         {/* Navigation links */}
         <nav className="hidden md:block">
