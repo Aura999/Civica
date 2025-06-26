@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 
 // Image and Video Import
 //import Banner from "../assets/Images/banner.mp4"
-import civica_front_image from "../assets/Images/civica_front_image.png"
+import civica_front_image_2 from "../assets/Images/civica_front_image_2.png"
 // Component Imports
 import Footer from "../components/Common/Footer"
 import ReviewSlider from "../components/Common/ReviewSlider"
@@ -48,14 +48,14 @@ function Home() {
             Learn More
           </CTAButton>
           <CTAButton active={false} linkto={"/login"}>
-            Book a Demo
+            Get On Board
           </CTAButton>
         </div>
 
         {/* image */}
         <div className="mx-3 my-7 shadow-[10px_-5px_50px_-5px] shadow-caribbeangreen-200">
   <img
-    src={civica_front_image}
+    src={civica_front_image_2}
     alt="Civica Front"
    className="w-[600px] h-auto shadow-[20px_20px_10px_rgba(0,0,0,0.5)]"
 

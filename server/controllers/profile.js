@@ -18,6 +18,7 @@ exports.updateProfile = async (req, res) => {
       gender = "",
     } = req.body
     const id = req.user.id
+    
 
     // Find the profile by id
     const userDetails = await User.findById(id)

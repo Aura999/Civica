@@ -63,10 +63,14 @@ export default function Upload({
         {label} {!viewData && <sup className="text-pink-200">*</sup>}
       </label>
       <div
+        {...getRootProps()}
         className={`${
           isDragActive ? "bg-richblack-600" : "bg-richblack-700"
         } flex min-h-[250px] cursor-pointer items-center justify-center rounded-md border-2 border-dotted border-richblack-500`}
       >
+        <input {...getInputProps()} ref={inputRef} />  
+         {/* see i have used input here */}
+
         {previewSource ? (
           <div className="flex w-full flex-col p-6">
             {!video ? (
@@ -95,15 +99,17 @@ export default function Upload({
         ) : (
           <div
             className="flex w-full flex-col items-center p-6"
-            {...getRootProps()}
+            //{...getRootProps()}
           >
-            <input {...getInputProps()} ref={inputRef} />
+            {/* <input {...getInputProps()} ref={inputRef} /> */}
             <div className="grid aspect-square w-14 place-items-center rounded-full bg-pure-greys-800">
               <FiUploadCloud className="text-2xl text-yellow-50" />
             </div>
             <p className="mt-2 max-w-[200px] text-center text-sm text-richblack-200">
               Drag and drop an {!video ? "image" : "video"}, or click to{" "}
-              <span className="font-semibold text-yellow-50">Browse</span> a
+              <span className="font-semibold text-yellow-50"
+               onClick={() => inputRef.current && inputRef.current.click()}       
+              >Browse</span> a
               file
             </p>
             <ul className="mt-10 flex list-disc justify-between space-x-12 text-center  text-xs text-richblack-200">

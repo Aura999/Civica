@@ -45,7 +45,8 @@ function Navbar() {
       setLoading(true)
       try {
         const res = await apiConnector("GET", categories.CATEGORIES_API)
-        console.log("API RESPONSE:", res.data);
+        //console.log("API RESPONSE only res:", res);
+        //console.log("API RESPONSE res.data:", res.data);
         setSubLinks(res?.data?.data);
         
       } catch (error) {
@@ -57,6 +58,7 @@ function Navbar() {
 
   
    console.log("sub links", subLinks)
+   console.log("sub links length", subLinks.length)
    console.log("Api calling", categories.CATEGORIES_API)
 
   const matchRoute = (route) => {
@@ -90,16 +92,14 @@ function Navbar() {
                     >
                       <p>{link.title}</p>
                       <BsChevronDown />
-                      <div className="invisible absolute left-[50%] top-[50%] z-[1000] flex w-[200px] translate-x-[-50%] translate-y-[3em] flex-col rounded-lg bg-richblack-5 p-4 text-richblack-900 opacity-0 transition-all duration-150 group-hover:visible group-hover:translate-y-[1.65em] group-hover:opacity-100 lg:w-[300px]">
-                        <div className="absolute left-[50%] top-0 -z-10 h-6 w-6 translate-x-[80%] translate-y-[-40%] rotate-45 select-none rounded bg-richblack-5"></div>
+                      <div className="invisible absolute left-[50%] top-[50%] z-[1000] flex w-[200px] translate-x-[-50%] translate-y-[3em] flex-col rounded-lg bg-pink-200 p-4 text-white opacity-0 transition-all duration-150 group-hover:visible group-hover:translate-y-[1.65em] group-hover:opacity-100 lg:w-[300px]">
+                        <div className="absolute left-[50%] top-0 -z-10 h-6 w-6 translate-x-[80%] translate-y-[-40%] rotate-45 select-none rounded bg-pink-200"></div>
                         {loading ? (
                           <p className="text-center">Loading...</p>
                         ) : subLinks.length ? (
                           <>
                             {subLinks
-                              ?.filter(
-                                (subLink) => subLink?.courses?.length > 0
-                              )
+                              
                               ?.map((subLink, i) => (
                                 <Link
                                   to={`/catalog/${subLink.name

@@ -30,6 +30,7 @@ exports.createCourse = async (req, res) => {
     const tag = JSON.parse(_tag)
     const instructions = JSON.parse(_instructions)
 
+    console.log(thumbnail)
     console.log("tag", tag)
     console.log("instructions", instructions)
 
