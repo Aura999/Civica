@@ -49,6 +49,22 @@ exports.capturePayment = async (req, res) => {
     }
   }
 
+   // 🎯 If the course is FREE, enroll directly (no Razorpay)
+  if (total_amount === 0) {
+    try {
+      await enrollStudents(courses, userId, res);
+      return res.status(200).json({
+        success: true,
+        message: "Enrolled successfully in free course(s)",
+        freeCourse: true,
+      });
+    } catch (err) {
+      return res
+        .status(500)
+        .json({ success: false, message: "Enrollment failed", error: err });
+    }
+  }
+
   const options = {
     amount: total_amount * 100,
     currency: "INR",
