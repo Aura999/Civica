@@ -1,4 +1,6 @@
-const { instance } = require("../config/razorpay")
+//const { instance } = require("../config/razorpay")
+const { getRazorpayInstance } = require("../config/razorpay");
+
 const Course = require("../models/Course")
 const crypto = require("crypto")
 const User = require("../models/User")
@@ -73,7 +75,10 @@ exports.capturePayment = async (req, res) => {
 
   try {
     // Initiate the payment using Razorpay
-    const paymentResponse = await instance.orders.create(options)
+    //const paymentResponse = await instance.orders.create(options)
+    const razorpay = getRazorpayInstance();
+    const paymentResponse = await razorpay.orders.create(options);
+
     console.log(paymentResponse)
     res.json({
       success: true,
