@@ -5,7 +5,6 @@ import { AiOutlineMenu, AiOutlineShoppingCart } from "react-icons/ai"
 import { BsChevronDown } from "react-icons/bs"
 import { useSelector } from "react-redux"
 import { Link, matchPath, useLocation } from "react-router-dom"
-import HighlightText from "../core/HomePage/HighlightText"
 
 //import logo from "../../assets/Logo/Logo-Full-Light.png"
 import { NavbarLinks } from "../../data/navbar-links"
@@ -13,6 +12,7 @@ import { apiConnector } from "../../services/apiConnector"
 import { categories } from "../../services/apis"
 import { ACCOUNT_TYPE } from "../../utils/constants"
 import ProfileDropdown from "../core/Auth/ProfileDropdown"
+import HighlightText from "../core/HomePage/HighlightText"
 
 // const subLinks = [
 //   {
@@ -44,14 +44,13 @@ function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       setLoading(true)
       try {
         const res = await apiConnector("GET", categories.CATEGORIES_API)
         //console.log("API RESPONSE only res:", res);
         //console.log("API RESPONSE res.data:", res.data);
-        setSubLinks(res?.data?.data);
-        
+        setSubLinks(res?.data?.data)
       } catch (error) {
         console.log("Could not fetch Categories.", error)
       }
@@ -59,10 +58,9 @@ function Navbar() {
     })()
   }, [])
 
-  
-   console.log("sub links", subLinks)
-   console.log("sub links length", subLinks.length)
-   console.log("Api calling", categories.CATEGORIES_API)
+  console.log("sub links", subLinks)
+  console.log("sub links length", subLinks.length)
+  console.log("Api calling", categories.CATEGORIES_API)
 
   const matchRoute = (route) => {
     return matchPath({ path: route }, location.pathname)
@@ -76,8 +74,8 @@ function Navbar() {
     >
       <div className="flex w-11/12 max-w-maxContent items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="text-2xl"> 
-          <HighlightText text={"Civica"} fontSize  />
+        <Link to="/" className="text-2xl">
+          <HighlightText text={"Civica"} fontSize />
         </Link>
         {/* Navigation links */}
         <nav className="hidden md:block">
@@ -95,26 +93,24 @@ function Navbar() {
                     >
                       <p>{link.title}</p>
                       <BsChevronDown />
-                      <div className="invisible absolute left-[50%] top-[50%] z-[1000] flex w-[200px] translate-x-[-50%] translate-y-[3em] flex-col border-2 border-b-pink-200 rounded-lg bg-black p-4 text-white opacity-0 transition-all duration-150 group-hover:visible group-hover:translate-y-[1.65em] group-hover:opacity-100 lg:w-[300px]">
+                      <div className="invisible absolute left-[50%] top-[50%] z-[1000] flex w-[200px] translate-x-[-50%] translate-y-[3em] flex-col rounded-lg border-2 border-b-pink-200 bg-black p-4 text-white opacity-0 transition-all duration-150 group-hover:visible group-hover:translate-y-[1.65em] group-hover:opacity-100 lg:w-[300px]">
                         <div className="absolute left-[50%] top-0 -z-10 h-6 w-6 translate-x-[80%] translate-y-[-40%] rotate-45 select-none rounded bg-black"></div>
                         {loading ? (
                           <p className="text-center">Loading...</p>
                         ) : subLinks.length ? (
                           <>
-                            {subLinks
-                              
-                              ?.map((subLink, i) => (
-                                <Link
-                                  to={`/catalog/${subLink.name
-                                    .split(" ")
-                                    .join("-")
-                                    .toLowerCase()}`}
-                                  className="rounded-lg bg-transparent py-4 pl-4 hover:bg-richblack-50 hover:text-black "
-                                  key={i}
-                                >
-                                  <p>{subLink.name}</p>
-                                </Link>
-                              ))}
+                            {subLinks?.map((subLink, i) => (
+                              <Link
+                                to={`/catalog/${subLink.name
+                                  .split(" ")
+                                  .join("-")
+                                  .toLowerCase()}`}
+                                className="rounded-lg bg-transparent py-4 pl-4 hover:bg-richblack-50 hover:text-black "
+                                key={i}
+                              >
+                                <p>{subLink.name}</p>
+                              </Link>
+                            ))}
                           </>
                         ) : (
                           <p className="text-center">No Courses Found</p>
@@ -167,22 +163,53 @@ function Navbar() {
           )}
           {token !== null && <ProfileDropdown />}
         </div>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="mr-4 md:hidden">
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="mr-4 md:hidden"
+        >
           <AiOutlineMenu fontSize={24} fill="#AFB2BF" />
         </button>
-         {/* Mobile menu dropdown */}
+        {/* Mobile menu dropdown */}
         {isMobileMenuOpen && (
-          <div className="absolute top-14 left-0 z-[998] w-full bg-richblack-900 p-4 text-white md:hidden">
+          <div className="absolute left-0 top-14 z-[998] w-full bg-richblack-900 p-4 text-white md:hidden">
             <ul className="flex flex-col gap-4">
               {NavbarLinks.map((link, index) => (
                 <li key={index}>
-                  <Link
-                    to={link.path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block px-2 py-1 hover:text-yellow-100"
-                  >
-                    {link.title}
-                  </Link>
+                  {link.title === "Catalog" ? (
+                    <>
+                      <p className="px-2 py-1 font-semibold">Catalog</p>
+                      <ul className="ml-4 flex flex-col gap-2">
+                        {loading ? (
+                          <li className="text-sm">Loading...</li>
+                        ) : subLinks.length ? (
+                          subLinks.map((subLink, i) => (
+                            <li key={i}>
+                              <Link
+                                to={`/catalog/${subLink.name
+                                  .split(" ")
+                                  .join("-")
+                                  .toLowerCase()}`}
+                                className="block text-sm hover:text-yellow-100"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                              >
+                                {subLink.name}
+                              </Link>
+                            </li>
+                          ))
+                        ) : (
+                          <li>No Courses</li>
+                        )}
+                      </ul>
+                    </>
+                  ) : (
+                    <Link
+                      to={link.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-2 py-1 hover:text-yellow-100"
+                    >
+                      {link.title}
+                    </Link>
+                  )}
                 </li>
               ))}
               {token === null ? (
