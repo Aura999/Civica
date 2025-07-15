@@ -1,6 +1,6 @@
 //sidebar.js
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { VscSignOut } from "react-icons/vsc"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
@@ -17,15 +17,6 @@ export default function Sidebar({ isSidebarOpen, closeSidebar }) {
   const navigate = useNavigate()
   const [confirmationModal, setConfirmationModal] = useState(null)
 
-  // Close sidebar on ESC key (optional)
-  useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === "Escape") closeSidebar()
-    }
-    window.addEventListener("keydown", handleEsc)
-    return () => window.removeEventListener("keydown", handleEsc)
-  }, [closeSidebar])
-
   if (profileLoading || authLoading) {
     return (
       <div className="grid h-[calc(100vh-3.5rem)] min-w-[220px] items-center border-r border-richblack-700 bg-richblack-800">
@@ -36,22 +27,24 @@ export default function Sidebar({ isSidebarOpen, closeSidebar }) {
 
   return (
     <>
-      {/* Backdrop (mobile only) */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden"
-          onClick={closeSidebar}
-        />
-      )}
-
-      {/* Sidebar */}
       <div
-        className={`fixed top-14 z-50 h-[calc(100vh-3.5rem)] min-w-[220px] flex-col border-r border-richblack-700 bg-richblack-800 py-10
-        transition-transform duration-300 ease-in-out
-        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        md:translate-x-0 md:static md:flex`}
+        className={`fixed inset-y-0 left-0 z-50 w-[220px] bg-richblack-800 py-10 px-4 
+          transition-transform duration-300 transform md:static md:translate-x-0 ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
-        <div className="flex flex-col">
+        {/* Close button for mobile */}
+        {isSidebarOpen && (
+          <button
+            className="absolute top-4 right-4 text-richblack-300 md:hidden"
+            onClick={closeSidebar}
+          >
+            ✕
+          </button>
+        )}
+
+        {/* Sidebar Links */}
+        <div className="flex flex-col mt-6">
           {sidebarLinks.map((link) => {
             if (link.type && user?.accountType !== link.type) return null
             return (
@@ -59,7 +52,7 @@ export default function Sidebar({ isSidebarOpen, closeSidebar }) {
                 key={link.id}
                 link={link}
                 iconName={link.icon}
-                onClick={closeSidebar} // mobile: closes sidebar
+                onClick={closeSidebar}
               />
             )
           })}
@@ -67,13 +60,13 @@ export default function Sidebar({ isSidebarOpen, closeSidebar }) {
 
         <div className="mx-auto mt-6 mb-6 h-[1px] w-10/12 bg-richblack-700" />
 
+        {/* Settings and Logout */}
         <div className="flex flex-col">
           <SidebarLink
             link={{ name: "Settings", path: "/dashboard/settings" }}
             iconName="VscSettingsGear"
             onClick={closeSidebar}
           />
-
           <button
             onClick={() =>
               setConfirmationModal({
@@ -99,5 +92,6 @@ export default function Sidebar({ isSidebarOpen, closeSidebar }) {
     </>
   )
 }
+
 
 
