@@ -1,3 +1,5 @@
+//navbar.js
+
 import { useEffect, useState } from "react"
 import { AiOutlineMenu, AiOutlineShoppingCart } from "react-icons/ai"
 import { BsChevronDown } from "react-icons/bs"
@@ -39,6 +41,7 @@ function Navbar() {
 
   const [subLinks, setSubLinks] = useState([])
   const [loading, setLoading] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     (async () => {
@@ -164,9 +167,53 @@ function Navbar() {
           )}
           {token !== null && <ProfileDropdown />}
         </div>
-        <button className="mr-4 md:hidden">
+        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="mr-4 md:hidden">
           <AiOutlineMenu fontSize={24} fill="#AFB2BF" />
         </button>
+         {/* Mobile menu dropdown */}
+        {isMobileMenuOpen && (
+          <div className="absolute top-14 left-0 z-[998] w-full bg-richblack-900 p-4 text-white md:hidden">
+            <ul className="flex flex-col gap-4">
+              {NavbarLinks.map((link, index) => (
+                <li key={index}>
+                  <Link
+                    to={link.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block px-2 py-1 hover:text-yellow-100"
+                  >
+                    {link.title}
+                  </Link>
+                </li>
+              ))}
+              {token === null ? (
+                <>
+                  <li>
+                    <Link
+                      to="/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-2 py-1"
+                    >
+                      Log in
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/signup"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-2 py-1"
+                    >
+                      Sign up
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <li>
+                  <ProfileDropdown />
+                </li>
+              )}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   )
