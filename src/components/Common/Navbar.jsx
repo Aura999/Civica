@@ -234,9 +234,29 @@ function Navbar() {
                   </li>
                 </>
               ) : (
-                <li>
-                  <ProfileDropdown />
-                </li>
+                <>
+                  <li>
+                    <Link
+                      to="/dashboard/my-profile"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-2 py-1 hover:text-yellow-100"
+                    >
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/logout" // optional: if you handle logout via route or handler
+                      onClick={() => {
+                        // Add logout handler if needed here
+                        setIsMobileMenuOpen(false)
+                      }}
+                      className="block px-2 py-1 hover:text-pink-100"
+                    >
+                      Logout
+                    </Link>
+                  </li>
+                </>
               )}
             </ul>
           </div>
