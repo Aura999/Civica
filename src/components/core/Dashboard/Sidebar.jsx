@@ -1,3 +1,5 @@
+// Sidebar.js
+
 import { useState } from "react"
 import { VscSignOut } from "react-icons/vsc"
 import { useDispatch, useSelector } from "react-redux"
@@ -9,14 +11,16 @@ import ConfirmationModal from "../../Common/ConfirmationModal"
 import SidebarLink from "./SidebarLink"
 
 export default function Sidebar() {
-  const { user, loading: profileLoading } = useSelector(
-    (state) => state.profile
-  )
+  const { user, loading: profileLoading } = useSelector((state) => state.profile)
   const { loading: authLoading } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  // to keep track of confirmation modal
   const [confirmationModal, setConfirmationModal] = useState(null)
+
+  // Closes sidebar on mobile — pass this to links if needed
+  const handleSidebarClose = () => {
+    // Optional: toggle logic if making collapsible sidebar
+  }
 
   if (profileLoading || authLoading) {
     return (
@@ -33,7 +37,12 @@ export default function Sidebar() {
           {sidebarLinks.map((link) => {
             if (link.type && user?.accountType !== link.type) return null
             return (
-              <SidebarLink key={link.id} link={link} iconName={link.icon} />
+              <SidebarLink
+                key={link.id}
+                link={link}
+                iconName={link.icon}
+                onClick={handleSidebarClose}
+              />
             )
           })}
         </div>
@@ -42,6 +51,7 @@ export default function Sidebar() {
           <SidebarLink
             link={{ name: "Settings", path: "/dashboard/settings" }}
             iconName="VscSettingsGear"
+            onClick={handleSidebarClose}
           />
           <button
             onClick={() =>
@@ -63,7 +73,9 @@ export default function Sidebar() {
           </button>
         </div>
       </div>
+
       {confirmationModal && <ConfirmationModal modalData={confirmationModal} />}
     </>
   )
 }
+
