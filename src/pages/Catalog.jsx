@@ -1,3 +1,5 @@
+//catalogue Page
+
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
@@ -18,12 +20,17 @@ function Catalog() {
   const [active, setActive] = useState(1)
   const [catalogPageData, setCatalogPageData] = useState(null)
   const [categoryId, setCategoryId] = useState("")
+
+
   // Fetch All Categories
+
   useEffect(() => {
     ;(async () => {
       try {
         const res = await apiConnector("GET", categories.CATEGORIES_API)
-        const category_id = res?.data?.data?.filter(
+        console.log(res)
+        console.log(res?.data);
+        const category_id = res?.data?.data?.filter(   //can also use find
           (ct) => ct.name.split(" ").join("-").toLowerCase() === catalogName
         )[0]._id
         setCategoryId(category_id)
@@ -32,6 +39,7 @@ function Catalog() {
       }
     })()
   }, [catalogName])
+
   useEffect(() => {
     if (categoryId) {
       ;(async () => {
@@ -121,13 +129,13 @@ function Catalog() {
 
       {/* Section 3 */}
       <div className=" mx-auto box-content w-full max-w-maxContentTab px-4 py-12 lg:max-w-maxContent">
-        <div className="section_heading">Frequently Bought</div>
+        <div className="section_heading">Frequently Viewed</div>
         <div className="py-8">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {catalogPageData?.data?.mostSellingCourses
               ?.slice(0, 4)
               .map((course, i) => (
-                <Course_Card course={course} key={i} Height={"h-[400px]"} />
+                <Course_Card course={course} key={i} Height={"h-[200px]"} />
               ))}
           </div>
         </div>
