@@ -36,8 +36,8 @@ function ReviewSlider() {
   // console.log(reviews)
 
   return (
-    <div className="text-white">
-      <div className="my-[50px] h-[184px] max-w-maxContentTab lg:max-w-maxContent">
+    <div className="text-white w-full px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto">
         <Swiper
           breakpoints={{
             320: { slidesPerView: 1 },
