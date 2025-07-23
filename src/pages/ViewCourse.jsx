@@ -1,3 +1,5 @@
+//ViewCOurse.jsx
+
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Outlet, useParams } from "react-router-dom"
@@ -17,6 +19,7 @@ export default function ViewCourse() {
   const { token } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
   const [reviewModal, setReviewModal] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
     ;(async () => {
@@ -36,14 +39,41 @@ export default function ViewCourse() {
 
   return (
     <>
-      <div className="relative flex min-h-[calc(100vh-3.5rem)]">
-        <VideoDetailsSidebar setReviewModal={setReviewModal} />
-        <div className="h-[calc(100vh-3.5rem)] flex-1 overflow-auto">
+       <div className="relative flex min-h-[calc(100vh-3.5rem)]">
+
+        {/* Toggle button for mobile */}
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="absolute top-4 left-4 z-50 text-white md:hidden"
+        >
+          <HiOutlineMenuAlt3 size={28} />
+        </button>
+
+        {/* Sidebar */}
+        <div
+          className={`fixed top-0 left-0 z-40 h-full w-[75%] max-w-[320px] transform bg-richblack-800 transition-transform duration-300 md:relative md:translate-x-0 ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <VideoDetailsSidebar setReviewModal={setReviewModal} />
+        </div>
+
+        {/* Backdrop when sidebar is open */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 z-30 bg-black bg-opacity-50 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Main Video Content */}
+        <div className="h-[calc(100vh-3.5rem)] flex-1 overflow-auto z-10">
           <div className="mx-6">
             <Outlet />
           </div>
         </div>
       </div>
+
       {reviewModal && <CourseReviewModal setReviewModal={setReviewModal} />}
     </>
   )
