@@ -199,7 +199,7 @@ function Navbar() {
                                     .split(" ")
                                     .join("-")
                                     .toLowerCase()}`}
-                                  className="block text-sm hover:text-yellow-100"
+                                  className="block text-sm hover:text-yellow-100 rounded-md border border-yellow-25"
                                   onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                   {subLink.name}
