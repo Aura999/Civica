@@ -69,9 +69,9 @@ function Navbar() {
 
   return (
     <div
-      className={`flex h-14 items-center justify-center border-b-[1px] border-b-richblack-700 ${
-        location.pathname !== "/" ? "bg-black" : ""
-      } transition-all duration-200`}
+      className={`sticky top-0 z-[999] flex h-14 items-center justify-center border-b-[1px] border-b-richblack-700 ${
+    location.pathname !== "/" ? "bg-black" : "bg-richblack-900"
+  } transition-all duration-200`}
     >
       <div className="flex w-11/12 max-w-maxContent items-center justify-between">
         {/* Logo */}
@@ -189,7 +189,7 @@ function Navbar() {
 
                       {/*  Animated Dropdown Wrapper */}
                       <div
-                        className={`ml-4 mt-2 overflow-hidden transition-all duration-300 ease-in-out ${
+                        className={`ml-4 mt-2 overflow-hidden transition-all duration-500 ease-in-out ${
                           isCatalogOpen
                             ? "max-h-[1000px] opacity-100"
                             : "max-h-0 opacity-0"
