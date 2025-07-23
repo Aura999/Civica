@@ -188,7 +188,7 @@ function Navbar() {
                       </button>
 
                       {isCatalogOpen && (
-                        <ul className="ml-4 mt-2 flex flex-col gap-2">
+                        <ul className="ml-4 mt-2 flex flex-col gap-y-2 rounded-md border border-richblack-600 bg-richblack-800 p-2">
                           {loading ? (
                             <li className="text-sm">Loading...</li>
                           ) : subLinks.length ? (

@@ -5,6 +5,7 @@ exports.contactUsController = async (req, res) => {
   const { email, firstname, lastname, message, phoneNo, countrycode } = req.body
   console.log(req.body)
   try {
+    //confirmation mail to the sender
     const emailRes = await mailSender(
       email,
       "Your Data send successfully",
@@ -12,7 +13,7 @@ exports.contactUsController = async (req, res) => {
     )
     console.log("Email Res ", emailRes)
 
-    // 📨 2. Send notification email to support/admin
+    // 📨 2. Send notification email to support
     await mailSender(
       "civicasatyam@gmail.com",
       "New Contact Form Submission",
