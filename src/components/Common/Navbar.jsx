@@ -266,7 +266,7 @@ function Navbar() {
                       Dashboard
                     </Link>
                   </li>
-                  <li>
+                  {/* <li>
                     <Link
                       to="/logout" // optional: if you handle logout via route or handler
                       onClick={() => {
@@ -277,7 +277,7 @@ function Navbar() {
                     >
                       Logout
                     </Link>
-                  </li>
+                  </li> */}
                 </>
               )}
             </ul>
