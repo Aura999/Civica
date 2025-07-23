@@ -1,3 +1,5 @@
+//chip Input.jsx
+
 // Importing React hook for managing component state
 import { useEffect, useState } from "react"
 // Importing React icon component
@@ -25,7 +27,7 @@ export default function ChipInput({
       // console.log(course)
       setChips(course?.tag)
     }
-    register(name, { required: true, validate: (value) => value.length > 0 })
+    register(name)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
