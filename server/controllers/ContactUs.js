@@ -11,6 +11,25 @@ exports.contactUsController = async (req, res) => {
       contactUsEmail(email, firstname, lastname, message, phoneNo, countrycode)
     )
     console.log("Email Res ", emailRes)
+
+    // 📨 2. Send notification email to support/admin
+    await mailSender(
+      "civicasatyam@gmail.com",
+      "New Contact Form Submission",
+      `
+  You received a new message from the website:
+
+    Name: ${firstname} ${lastname}
+   Email: ${email}
+   Phone: ${countrycode} ${phoneNo}
+
+📝 Message:
+${message}
+
+🕒 Submitted At: ${new Date().toLocaleString()}
+      `
+    )
+
     return res.json({
       success: true,
       message: "Email send successfully",
