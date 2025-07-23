@@ -1,3 +1,5 @@
+//course controller
+
 const Course = require("../models/Course")
 const Category = require("../models/Category")
 const Section = require("../models/Section")
@@ -18,7 +20,7 @@ exports.createCourse = async (req, res) => {
       courseDescription,
       whatYouWillLearn,
       price,
-      tag: _tag,
+      
       category,
       status,
       instructions: _instructions,
@@ -27,11 +29,11 @@ exports.createCourse = async (req, res) => {
     const thumbnail = req.files.thumbnailImage
 
     // Convert the tag and instructions from stringified Array to Array
-    const tag = JSON.parse(_tag)
+    
     const instructions = JSON.parse(_instructions)
 
     console.log(thumbnail)
-    console.log("tag", tag)
+    
     console.log("instructions", instructions)
 
     // Check if any of the required fields are missing
@@ -40,7 +42,6 @@ exports.createCourse = async (req, res) => {
       !courseDescription ||
       !whatYouWillLearn ||
       !price ||
-      !tag.length ||
       !thumbnail ||
       !category ||
       !instructions.length
@@ -86,7 +87,6 @@ exports.createCourse = async (req, res) => {
       instructor: instructorDetails._id,
       whatYouWillLearn: whatYouWillLearn,
       price,
-      tag,
       category: categoryDetails._id,
       thumbnail: thumbnailImage.secure_url,
       status: status,
@@ -157,7 +157,7 @@ exports.editCourse = async (req, res) => {
     // Update only the fields that are present in the request body
     for (const key in updates) {
       if (updates.hasOwnProperty(key)) {
-        if (key === "tag" || key === "instructions") {
+        if (key === "instructions") {
           course[key] = JSON.parse(updates[key])
         } else {
           course[key] = updates[key]
