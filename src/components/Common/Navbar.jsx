@@ -188,7 +188,7 @@ function Navbar() {
                       </button>
 
                       {isCatalogOpen && (
-                        <ul className="ml-4 mt-2 flex flex-col gap-y-2 rounded-md border border-richblack-600 bg-richblack-800 p-2">
+                        <ul className="ml-4 mt-2 flex flex-col rounded-md border border-richblack-600 bg-richblack-800 p-2">
                           {loading ? (
                             <li className="text-sm">Loading...</li>
                           ) : subLinks.length ? (
@@ -199,7 +199,7 @@ function Navbar() {
                                     .split(" ")
                                     .join("-")
                                     .toLowerCase()}`}
-                                  className="block text-sm hover:text-yellow-100 rounded-md border border-yellow-25"
+                                  className="block px-3 py-4 text-base font-semibold hover:text-yellow-100 border-b last:border-b-0 border-yellow-25"
                                   onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                   {subLink.name}
