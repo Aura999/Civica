@@ -187,10 +187,19 @@ function Navbar() {
                         <span>{isCatalogOpen ? "▲" : "▼"}</span>
                       </button>
 
-                      {isCatalogOpen && (
-                        <ul className="ml-4 mt-2 flex flex-col rounded-md border border-richblack-600 bg-richblack-800 p-2">
+                      {/*  Animated Dropdown Wrapper */}
+                      <div
+                        className={`ml-4 mt-2 overflow-hidden transition-all duration-300 ease-in-out ${
+                          isCatalogOpen
+                            ? "max-h-[1000px] opacity-100"
+                            : "max-h-0 opacity-0"
+                        }`}
+                      >
+                        <ul className="flex flex-col rounded-md border border-richblack-600 bg-richblack-800 p-2">
                           {loading ? (
-                            <li className="text-sm">Loading...</li>
+                            <li className="px-2 py-1 text-sm font-medium">
+                              Loading...
+                            </li>
                           ) : subLinks.length ? (
                             subLinks.map((subLink, i) => (
                               <li key={i}>
@@ -199,7 +208,7 @@ function Navbar() {
                                     .split(" ")
                                     .join("-")
                                     .toLowerCase()}`}
-                                  className="block px-3 py-4 text-base font-semibold hover:text-yellow-100 border-b last:border-b-0 border-yellow-25"
+                                  className="block border-b border-yellow-25 px-3 py-4 text-base font-semibold transition-colors duration-200 last:border-b-0 hover:bg-richblack-700 hover:text-yellow-100"
                                   onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                   {subLink.name}
@@ -207,10 +216,12 @@ function Navbar() {
                               </li>
                             ))
                           ) : (
-                            <li>No Courses</li>
+                            <li className="px-2 py-2 text-base font-medium">
+                              No Courses
+                            </li>
                           )}
                         </ul>
-                      )}
+                      </div>
                     </>
                   ) : (
                     <Link
