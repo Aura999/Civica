@@ -42,6 +42,7 @@ function Navbar() {
   const [subLinks, setSubLinks] = useState([])
   const [loading, setLoading] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isCatalogOpen, setIsCatalogOpen] = useState(false)
 
   useEffect(() => {
     ;(async () => {
@@ -169,6 +170,7 @@ function Navbar() {
         >
           <AiOutlineMenu fontSize={24} fill="#AFB2BF" />
         </button>
+
         {/* Mobile menu dropdown */}
         {isMobileMenuOpen && (
           <div className="absolute left-0 top-14 z-[998] w-full bg-richblack-900 p-4 text-white md:hidden">
@@ -177,29 +179,38 @@ function Navbar() {
                 <li key={index}>
                   {link.title === "Catalog" ? (
                     <>
-                      <p className="px-2 py-1 font-semibold">Catalog</p>
-                      <ul className="ml-4 flex flex-col gap-2">
-                        {loading ? (
-                          <li className="text-sm">Loading...</li>
-                        ) : subLinks.length ? (
-                          subLinks.map((subLink, i) => (
-                            <li key={i}>
-                              <Link
-                                to={`/catalog/${subLink.name
-                                  .split(" ")
-                                  .join("-")
-                                  .toLowerCase()}`}
-                                className="block text-sm hover:text-yellow-100"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                              >
-                                {subLink.name}
-                              </Link>
-                            </li>
-                          ))
-                        ) : (
-                          <li>No Courses</li>
-                        )}
-                      </ul>
+                      <button
+                        onClick={() => setIsCatalogOpen((prev) => !prev)}
+                        className="flex w-full items-center justify-between px-2 py-1 font-semibold"
+                      >
+                        Catalog
+                        <span>{isCatalogOpen ? "▲" : "▼"}</span>
+                      </button>
+
+                      {isCatalogOpen && (
+                        <ul className="ml-4 mt-2 flex flex-col gap-2">
+                          {loading ? (
+                            <li className="text-sm">Loading...</li>
+                          ) : subLinks.length ? (
+                            subLinks.map((subLink, i) => (
+                              <li key={i}>
+                                <Link
+                                  to={`/catalog/${subLink.name
+                                    .split(" ")
+                                    .join("-")
+                                    .toLowerCase()}`}
+                                  className="block text-sm hover:text-yellow-100"
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                  {subLink.name}
+                                </Link>
+                              </li>
+                            ))
+                          ) : (
+                            <li>No Courses</li>
+                          )}
+                        </ul>
+                      )}
                     </>
                   ) : (
                     <Link
