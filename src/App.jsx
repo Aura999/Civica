@@ -1,3 +1,5 @@
+//app.js
+
 import { useEffect } from "react"
 import "./App.css"
 // Redux
@@ -109,6 +111,7 @@ function App() {
           {/* Route for all users */}
           <Route path="dashboard/my-profile" element={<MyProfile />} />
           <Route path="dashboard/Settings" element={<Settings />} />
+          
           {/* Route only for Instructors */}
           {user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
             <>
