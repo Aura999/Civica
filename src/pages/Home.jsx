@@ -33,7 +33,7 @@ function Home() {
 
         {/* Heading */}
         <div className="text-center text-4xl font-semibold">
-          Empowering Young Minds with 
+          Empoweringgggg Young Minds with 
           <HighlightText text={"Civica"} />
         </div>
 
