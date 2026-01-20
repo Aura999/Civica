@@ -31,6 +31,7 @@ function CourseSlider({ Courses }) {
         >
           {Courses?.map((course, i) => (
             <SwiperSlide key={i}>
+              {/* eslint-disable-next-line react/jsx-pascal-case */}
               <Course_Card course={course} Height={"h-[250px]"} />
             </SwiperSlide>
           ))}
