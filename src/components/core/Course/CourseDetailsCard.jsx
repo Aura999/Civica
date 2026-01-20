@@ -181,25 +181,6 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
     toast.success("Link copied to clipboard")
   }
 
-  const handleAddToCart = () => {
-    if (user && user?.accountType === ACCOUNT_TYPE.INSTRUCTOR) {
-      toast.error("You are an Instructor. You can't buy a course.")
-      return
-    }
-    if (token) {
-      dispatch(addToCart(course))
-      return
-    }
-    setConfirmationModal({
-      text1: "You are not logged in!",
-      text2: "Please login to add To Cart",
-      btn1Text: "Login",
-      btn2Text: "Cancel",
-      btn1Handler: () => navigate("/login"),
-      btn2Handler: () => setConfirmationModal(null),
-    })
-  }
-
   return (
     <div className="flex flex-col gap-4 rounded-md bg-richblack-700 p-4 text-richblack-5 max-w-full">
       {/* Course Image */}
