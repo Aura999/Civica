@@ -62,7 +62,7 @@ exports.signup = async (req, res) => {
       // OTP not found for the email
       return res.status(400).json({
         success: false,
-        message: "The OTP is not valid",
+        message: "The OTP not found for this email",
       })
     } else if (otp !== response[0].otp) {
       // Invalid OTP
@@ -264,7 +264,12 @@ exports.changePassword = async (req, res) => {
           `Password updated successfully for ${updatedUserDetails.firstName} ${updatedUserDetails.lastName}`
         )
       )
-      console.log("Email sent successfully:", emailResponse.response)
+      
+      if (emailResponse.success) {
+        console.log("Email sent successfully:", emailResponse.response)
+      } else {
+        console.error("Email failed:", emailResponse.error)
+      }
     } catch (error) {
       // If there's an error sending the email, log the error and return a 500 (Internal Server Error) error
       console.error("Error occurred while sending email:", error)

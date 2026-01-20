@@ -45,10 +45,19 @@ const mailSender = async (email, title, body) => {
       }
     );
     console.log("Email API status:", res.status);
-    return res.data;
+    return {
+      success: true,
+      response: res.status,
+      data: res.data,
+    };
   } catch (err) {
-    console.error("Mail API error:", err.message);
-    return null;
+    const errorMessage = err?.response?.data?.message || err.message;
+    console.error("Mail API error:", errorMessage);
+    return {
+      success: false,
+      response: null,
+      error: errorMessage,
+    };
   }
 };
 
