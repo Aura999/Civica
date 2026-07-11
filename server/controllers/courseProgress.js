@@ -1,8 +1,5 @@
-const mongoose = require("mongoose")
-const Section = require("../models/Section")
 const SubSection = require("../models/Subsection")
-const CourseProgress = require("../models/CourseProgress")
-const Course = require("../models/Course")
+const enrollmentService = require("../modules/enrollments/enrollment.service")
 
 exports.updateCourseProgress = async (req, res) => {
   const { courseId, subsectionId } = req.body
@@ -15,35 +12,26 @@ exports.updateCourseProgress = async (req, res) => {
       return res.status(404).json({ error: "Invalid subsection" })
     }
 
-    // Find the course progress document for the user and course
-    let courseProgress = await CourseProgress.findOne({
-      courseID: courseId,
-      userId: userId,
+    const enrollment = await enrollmentService.markLessonComplete(
+      userId,
+      courseId,
+      subsectionId
+    )
+
+    return res.status(200).json({
+      success: true,
+      message: "Course progress updated",
+      data: {
+        progressPercentage: enrollment.progressPercentage,
+        completedLessons: enrollment.completedLessons,
+      },
     })
-
-    if (!courseProgress) {
-      // If course progress doesn't exist, create a new one
-      return res.status(404).json({
-        success: false,
-        message: "Course progress Does Not Exist",
-      })
-    } else {
-      // If course progress exists, check if the subsection is already completed
-      if (courseProgress.completedVideos.includes(subsectionId)) {
-        return res.status(400).json({ error: "Subsection already completed" })
-      }
-
-      // Push the subsection into the completedVideos array
-      courseProgress.completedVideos.push(subsectionId)
-    }
-
-    // Save the updated course progress
-    await courseProgress.save()
-
-    return res.status(200).json({ message: "Course progress updated" })
   } catch (error) {
-    console.error(error)
-    return res.status(500).json({ error: "Internal server error" })
+    console.error("Course progress update failed:", error.message)
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    })
   }
 }
 

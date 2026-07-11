@@ -6,11 +6,8 @@ const crypto = require("crypto")
 const User = require("../models/User")
 const mailSender = require("../utils/mailSender")
 const mongoose = require("mongoose")
-const {
-  courseEnrollmentEmail,
-} = require("../mail/templates/courseEnrollmentEmail")
 const { paymentSuccessEmail } = require("../mail/templates/paymentSuccessEmail")
-const CourseProgress = require("../models/CourseProgress")
+const enrollmentService = require("../modules/enrollments/enrollment.service")
 
 // Capture the payment and initiate the Razorpay order
 exports.capturePayment = async (req, res) => {
@@ -54,7 +51,7 @@ exports.capturePayment = async (req, res) => {
    // 🎯 If the course is FREE, enroll directly (no Razorpay)
   if (total_amount === 0) {
     try {
-      await enrollStudents(courses, userId, res);
+      await enrollStudents(courses, userId);
       return res.status(200).json({
         success: true,
         message: "Enrolled successfully in free course(s)",
@@ -118,7 +115,7 @@ exports.verifyPayment = async (req, res) => {
     .digest("hex")
 
   if (expectedSignature === razorpay_signature) {
-    await enrollStudents(courses, userId, res)
+    await enrollStudents(courses, userId)
     return res.status(200).json({ success: true, message: "Payment Verified" })
   }
 
@@ -158,61 +155,13 @@ exports.sendPaymentSuccessEmail = async (req, res) => {
   }
 }
 
-// enroll the student in the courses
-const enrollStudents = async (courses, userId, res) => {
+// Deprecated payment bridge: enrollment writes are owned by enrollmentService.
+const enrollStudents = async (courses, userId) => {
   if (!courses || !userId) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Please Provide Course ID and User ID" })
+    throw new Error("Course ID and user ID are required")
   }
 
   for (const courseId of courses) {
-    try {
-      // Find the course and enroll the student in it
-      const enrolledCourse = await Course.findOneAndUpdate(
-        { _id: courseId },
-        { $push: { studentsEnroled: userId } },
-        { new: true }
-      )
-
-      if (!enrolledCourse) {
-        return res
-          .status(500)
-          .json({ success: false, error: "Course not found" })
-      }
-      console.log("Student enrolled in course")
-
-      const courseProgress = await CourseProgress.create({
-        courseID: courseId,
-        userId: userId,
-        completedVideos: [],
-      })
-      // Find the student and add the course to their list of enrolled courses
-      const enrolledStudent = await User.findByIdAndUpdate(
-        userId,
-        {
-          $push: {
-            courses: courseId,
-            courseProgress: courseProgress._id,
-          },
-        },
-        { new: true }
-      )
-
-      // Send an email notification to the enrolled student
-      await mailSender(
-        enrolledStudent.email,
-        `Successfully Enrolled into ${enrolledCourse.courseName}`,
-        courseEnrollmentEmail(
-          enrolledCourse.courseName,
-          `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
-        )
-      )
-
-      console.log("Enrollment email sent")
-    } catch (error) {
-      console.error("Enrollment failed:", error.message)
-      return res.status(400).json({ success: false, message: "Enrollment failed" })
-    }
+    await enrollmentService.enrollStudent(userId, courseId, { sendEmail: true })
   }
 }

@@ -154,6 +154,7 @@ import { BsFillCaretRightFill } from "react-icons/bs"
 import { FaShareSquare } from "react-icons/fa"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import { ACCOUNT_TYPE } from "../../../utils/constants"
 
 function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
   const { user } = useSelector((state) => state.profile)
@@ -164,6 +165,7 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
   // Normalize studentsEnroled to strings to handle ObjectId vs string mismatch
   const normalizedIds = course?.studentsEnroled?.map((id) => id.toString())
   const isEnrolled = normalizedIds?.includes(user?._id)
+  const canStudentEnroll = !user || user?.accountType === ACCOUNT_TYPE.STUDENT
 
   // Debug logs (optional)
   console.log("studentsEnroled:", course?.studentsEnroled)
@@ -193,13 +195,18 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
         <div className="flex flex-col gap-4">
           <button
             className="yellowButton w-full md:w-auto"
+            disabled={!canStudentEnroll}
             onClick={
               user && isEnrolled
                 ? () => navigate("/dashboard/enrolled-courses")
                 : handleBuyCourse
             }
           >
-            {user && isEnrolled ? "Go To Course" : "Buy Now"}
+            {user && isEnrolled
+              ? "Go To Course"
+              : canStudentEnroll
+              ? "Enroll for Free"
+              : "Enrollment Unavailable"}
           </button>
 
           

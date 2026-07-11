@@ -10,7 +10,36 @@ const {
   COURSE_PAYMENT_API,
   COURSE_VERIFY_API,
   SEND_PAYMENT_SUCCESS_EMAIL_API,
+  FREE_ENROLL_API,
 } = studentEndpoints
+
+export async function freeEnroll(courseId, token, navigate) {
+  const toastId = toast.loading("Enrolling...")
+  try {
+    const response = await apiConnector(
+      "POST",
+      `${FREE_ENROLL_API}/${courseId}`,
+      null,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    )
+
+    if (!response.data.success) {
+      throw new Error(response.data.message)
+    }
+
+    toast.success(response.data.message || "Enrolled successfully")
+    navigate("/dashboard/enrolled-courses")
+    return response.data.data
+  } catch (error) {
+    console.log("FREE ENROLL API ERROR............", error)
+    toast.error(error?.response?.data?.message || "Could not enroll in course")
+    return null
+  } finally {
+    toast.dismiss(toastId)
+  }
+}
 
 // Load the Razorpay SDK from the CDN
 function loadScript(src) {

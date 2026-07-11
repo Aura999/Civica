@@ -1,6 +1,7 @@
 const RatingAndReview = require("../models/RatingandReview")
 const Course = require("../models/Course")
 const mongoose = require("mongoose")
+const enrollmentService = require("../modules/enrollments/enrollment.service")
 
 // Create a new rating and review
 exports.createRating = async (req, res) => {
@@ -8,19 +9,19 @@ exports.createRating = async (req, res) => {
     const userId = req.user.id
     const { rating, review, courseId } = req.body
 
-    // Check if the user is enrolled in the course
-
-    const courseDetails = await Course.findOne({
-      _id: courseId,
-      studentsEnroled: { $elemMatch: { $eq: userId } },
-    })
-
+    const courseDetails = await Course.findById(courseId)
     if (!courseDetails) {
-      return res.status(404).json({
+      return res.status(404).json({ success: false, message: "Course not found" })
+    }
+
+    if (String(courseDetails.instructor) === String(userId)) {
+      return res.status(403).json({
         success: false,
-        message: "Student is not enrolled in this course",
+        message: "Instructor cannot review own course",
       })
     }
+
+    await enrollmentService.assertEnrollment(userId, courseId)
 
     // Check if the user has already reviewed the course
     const alreadyReviewed = await RatingAndReview.findOne({

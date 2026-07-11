@@ -1,9 +1,9 @@
 const Course = require("../models/Course")
 const Section = require("../models/Section")
 const User = require("../models/User")
-const CourseProgress = require("../models/CourseProgress")
 const ApiError = require("./ApiError")
 const asyncHandler = require("./asyncHandler")
+const enrollmentService = require("../modules/enrollments/enrollment.service")
 
 const getAuthenticatedUser = async (req) => {
   const user = await User.findById(req.user.id).select("accountType approved")
@@ -120,20 +120,12 @@ const requireSubSectionCourseOwner = ({
 const requireCourseEnrollment = (getCourseId = (req) => req.body.courseId) =>
   asyncHandler(async (req, res, next) => {
     const courseId = getCourseId(req)
-    const course = await Course.findById(courseId).select("studentsEnroled")
+    const course = await Course.findById(courseId).select("_id")
     if (!course) {
       throw new ApiError(404, "Course not found")
     }
 
-    const isEnrolled = course.studentsEnroled.map(String).includes(String(req.user.id))
-    const hasProgress = await CourseProgress.exists({
-      courseID: courseId,
-      userId: req.user.id,
-    })
-
-    if (!isEnrolled && !hasProgress) {
-      throw new ApiError(403, "Enrollment is required for this action")
-    }
+    await enrollmentService.assertEnrollment(req.user.id, courseId)
 
     return next()
   })
@@ -159,14 +151,8 @@ const requireFullCourseAccess = (getCourseId = (req) => req.body.courseId) =>
     }
 
     if (user.accountType === "Student") {
-      const isEnrolled = course.studentsEnroled.map(String).includes(String(req.user.id))
-      const hasProgress = await CourseProgress.exists({
-        courseID: courseId,
-        userId: req.user.id,
-      })
-      if (isEnrolled || hasProgress) {
-        return next()
-      }
+      await enrollmentService.assertEnrollment(req.user.id, courseId)
+      return next()
     }
 
     throw new ApiError(403, "You are not authorized to access this course content")

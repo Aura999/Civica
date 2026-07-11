@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import { BiInfoCircle } from "react-icons/bi"
 import { HiOutlineGlobeAlt } from "react-icons/hi"
 import { ReactMarkdown } from "react-markdown/lib/react-markdown"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 
 import ConfirmationModal from "../components/Common/ConfirmationModal"
@@ -14,8 +14,9 @@ import CourseAccordionBar from "../components/core/Course/CourseAccordionBar"
 import CourseDetailsCard from "../components/core/Course/CourseDetailsCard"
 import { formatDate } from "../services/formatDate"
 import { fetchCourseDetails } from "../services/operations/courseDetailsAPI"
-import { BuyCourse } from "../services/operations/studentFeaturesAPI"
+import { freeEnroll } from "../services/operations/studentFeaturesAPI"
 import GetAvgRating from "../utils/avgRating"
+import { ACCOUNT_TYPE } from "../utils/constants"
 import Error from "./Error"
 
 function CourseDetails() {
@@ -23,7 +24,6 @@ function CourseDetails() {
   const { token } = useSelector((state) => state.auth)
   const { loading } = useSelector((state) => state.profile)
   const { paymentLoading } = useSelector((state) => state.course)
-  const dispatch = useDispatch()
   const navigate = useNavigate()
 
   // Getting courseId from url parameter
@@ -101,19 +101,24 @@ function CourseDetails() {
     createdAt,
   } = response.data?.courseDetails
 
-  const handleBuyCourse = () => {
-    if (token) {
-      BuyCourse(token, [courseId], user, navigate, dispatch)
+  const handleBuyCourse = async () => {
+    if (!token) {
+      setConfirmationModal({
+        text1: "You are not logged in!",
+        text2: "Please login to enroll in this course.",
+        btn1Text: "Login",
+        btn2Text: "Cancel",
+        btn1Handler: () => navigate("/login"),
+        btn2Handler: () => setConfirmationModal(null),
+      })
       return
     }
-    setConfirmationModal({
-      text1: "You are not logged in!",
-      text2: "Please login to Purchase Course.",
-      btn1Text: "Login",
-      btn2Text: "Cancel",
-      btn1Handler: () => navigate("/login"),
-      btn2Handler: () => setConfirmationModal(null),
-    })
+
+    if (user?.accountType !== ACCOUNT_TYPE.STUDENT) {
+      return
+    }
+
+    await freeEnroll(courseId, token, navigate)
   }
 
   if (paymentLoading) {
@@ -128,6 +133,7 @@ function CourseDetails() {
     // Normalize studentsEnroled to strings to handle ObjectId vs string mismatch
   const normalizedIds = response?.data?.courseDetails?.studentsEnroled?.map((id) => id.toString())
   const isEnrolled = normalizedIds?.includes(user?._id)
+  const canStudentEnroll = !user || user?.accountType === ACCOUNT_TYPE.STUDENT
 
 
   return (
@@ -179,13 +185,18 @@ function CourseDetails() {
         <div className="flex flex-col gap-4">
           <button
             className="yellowButton w-full md:w-auto"
+            disabled={!canStudentEnroll}
             onClick={
               user && isEnrolled
                 ? () => navigate("/dashboard/enrolled-courses")
                 : handleBuyCourse
             }
           >
-            {user && isEnrolled ? "Go To Course" : "Buy Now"}
+            {user && isEnrolled
+              ? "Go To Course"
+              : canStudentEnroll
+              ? "Enroll for Free"
+              : "Enrollment Unavailable"}
           </button>
 
           
