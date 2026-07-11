@@ -7,9 +7,6 @@ const Razorpay = require("razorpay");
 // 	key_secret: process.env.RAZORPAY_SECRET,
 // });
 
-// console.log("razpay key --> ",process.env.RAZORPAY_KEY)
-// console.log("razpay secret --> ",process.env.RAZORPAY_SECRET)
-
 function getRazorpayInstance() {
   const key = process.env.RAZORPAY_KEY;
   const secret = process.env.RAZORPAY_SECRET;

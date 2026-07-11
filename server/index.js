@@ -1,4 +1,9 @@
 // Importing necessary modules and packages
+const dotenv = require("dotenv");
+
+// Loading environment variables from .env file before app configuration
+dotenv.config();
+
 const express = require("express");
 const app = express();
 const userRoutes = require("./routes/user");
@@ -11,16 +16,9 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { cloudinaryConnect } = require("./config/cloudinary");
 const fileUpload = require("express-fileupload");
-const dotenv = require("dotenv");
 
 // Setting up port number
 const PORT = process.env.PORT || 4000;
-
-// Loading environment variables from .env file
-dotenv.config();
-
-// Connecting to database
-database.connect();
  
 // Middlewares
 app.use(express.json());
@@ -48,9 +46,6 @@ app.use(
 	})
 );
 
-// Connecting to cloudinary
-cloudinaryConnect();
-
 // Setting up routes
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/profile", profileRoutes);
@@ -66,9 +61,24 @@ app.get("/", (req, res) => {
 	});
 });
 
-// Listening to the server
-app.listen(PORT, () => {
-	console.log(`App is listening at ${PORT}`);
-});
+const startServer = async () => {
+	try {
+		// Connecting to database
+		await database.connect();
+
+		// Connecting to cloudinary
+		cloudinaryConnect();
+
+		// Listening to the server only after the database is ready
+		app.listen(PORT, () => {
+			console.log(`App is listening at ${PORT}`);
+		});
+	} catch (error) {
+		console.error("Database connection failed:", error.message);
+		process.exit(1);
+	}
+};
+
+startServer();
 
 // End of code.
