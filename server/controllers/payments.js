@@ -46,8 +46,8 @@ exports.capturePayment = async (req, res) => {
       // Add the price of the course to the total amount
       total_amount += course.price
     } catch (error) {
-      console.log(error)
-      return res.status(500).json({ success: false, message: error.message })
+      console.error("Payment course validation failed:", error.message)
+      return res.status(500).json({ success: false, message: "Could not validate course payment" })
     }
   }
 
@@ -63,7 +63,7 @@ exports.capturePayment = async (req, res) => {
     } catch (err) {
       return res
         .status(500)
-        .json({ success: false, message: "Enrollment failed", error: err });
+        .json({ success: false, message: "Enrollment failed" });
     }
   }
 
@@ -79,13 +79,12 @@ exports.capturePayment = async (req, res) => {
     const razorpay = getRazorpayInstance();
     const paymentResponse = await razorpay.orders.create(options);
 
-    console.log(paymentResponse)
     res.json({
       success: true,
       data: paymentResponse,
     })
   } catch (error) {
-    console.log(error)
+    console.error("Payment order creation failed:", error.message)
     res
       .status(500)
       .json({ success: false, message: "Could not initiate order." })
@@ -152,7 +151,7 @@ exports.sendPaymentSuccessEmail = async (req, res) => {
       )
     )
   } catch (error) {
-    console.log("error in sending mail", error)
+    console.error("Payment success email failed:", error.message)
     return res
       .status(400)
       .json({ success: false, message: "Could not send email" })
@@ -181,7 +180,7 @@ const enrollStudents = async (courses, userId, res) => {
           .status(500)
           .json({ success: false, error: "Course not found" })
       }
-      console.log("Updated course: ", enrolledCourse)
+      console.log("Student enrolled in course")
 
       const courseProgress = await CourseProgress.create({
         courseID: courseId,
@@ -200,9 +199,8 @@ const enrollStudents = async (courses, userId, res) => {
         { new: true }
       )
 
-      console.log("Enrolled student: ", enrolledStudent)
       // Send an email notification to the enrolled student
-      const emailResponse = await mailSender(
+      await mailSender(
         enrolledStudent.email,
         `Successfully Enrolled into ${enrolledCourse.courseName}`,
         courseEnrollmentEmail(
@@ -211,10 +209,10 @@ const enrollStudents = async (courses, userId, res) => {
         )
       )
 
-      console.log("Email sent successfully: ", emailResponse.response)
+      console.log("Enrollment email sent")
     } catch (error) {
-      console.log(error)
-      return res.status(400).json({ success: false, error: error.message })
+      console.error("Enrollment failed:", error.message)
+      return res.status(400).json({ success: false, message: "Enrollment failed" })
     }
   }
 }

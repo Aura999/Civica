@@ -1,26 +1,21 @@
-require("dotenv").config();
+require("dotenv").config()
 
-const Razorpay = require("razorpay");
-
-// exports.instance = new Razorpay({
-// 	key_id: process.env.RAZORPAY_KEY,
-// 	key_secret: process.env.RAZORPAY_SECRET,
-// });
+const Razorpay = require("razorpay")
 
 function getRazorpayInstance() {
-  const key = process.env.RAZORPAY_KEY;
-  const secret = process.env.RAZORPAY_SECRET;
+  const key = process.env.RAZORPAY_KEY
+  const secret = process.env.RAZORPAY_SECRET
 
   if (!key || !secret) {
-    console.error(" RAZORPAY_KEY or RAZORPAY_SECRET is missing");
-    throw new Error("Razorpay keys are not set in environment variables");
+    console.error("Razorpay credentials are missing")
+    throw new Error("Razorpay keys are not set in environment variables")
   }
 
-  console.log("✅ Razorpay instance created");
+  console.log("Razorpay instance created")
   return new Razorpay({
     key_id: key,
     key_secret: secret,
-  });
+  })
 }
 
-module.exports = { getRazorpayInstance };
+module.exports = { getRazorpayInstance }

@@ -6,6 +6,8 @@ const User = require("../models/User")
 const { uploadImageToCloudinary } = require("../utils/imageUploader")
 const mongoose = require("mongoose")
 const { convertSecondsToDuration } = require("../utils/secToDuration")
+const { sanitizeUser } = require("../utils/sanitize")
+const { getCloudinaryFolder } = require("../config/env")
 // Method for updating a profile
 exports.updateProfile = async (req, res) => {
   try {
@@ -47,13 +49,13 @@ exports.updateProfile = async (req, res) => {
     return res.json({
       success: true,
       message: "Profile updated successfully",
-      updatedUserDetails,
+      updatedUserDetails: sanitizeUser(updatedUserDetails),
     })
   } catch (error) {
-    console.log(error)
+    console.error("Profile update failed:", error.message)
     return res.status(500).json({
       success: false,
-      error: error.message,
+      message: "Profile update failed",
     })
   }
 }
@@ -61,7 +63,6 @@ exports.updateProfile = async (req, res) => {
 exports.deleteAccount = async (req, res) => {
   try {
     const id = req.user.id
-    console.log(id)
     const user = await User.findById({ _id: id })
     if (!user) {
       return res.status(404).json({
@@ -88,7 +89,7 @@ exports.deleteAccount = async (req, res) => {
     })
     await CourseProgress.deleteMany({ userId: id })
   } catch (error) {
-    console.log(error)
+    console.error("Account deletion failed:", error.message)
     res
       .status(500)
       .json({ success: false, message: "User Cannot be deleted successfully" })
@@ -101,16 +102,15 @@ exports.getAllUserDetails = async (req, res) => {
     const userDetails = await User.findById(id)
       .populate("additionalDetails")
       .exec()
-    console.log(userDetails)
     res.status(200).json({
       success: true,
       message: "User Data fetched successfully",
-      data: userDetails,
+      data: sanitizeUser(userDetails),
     })
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Could not fetch user details",
     })
   }
 }
@@ -121,11 +121,10 @@ exports.updateDisplayPicture = async (req, res) => {
     const userId = req.user.id
     const image = await uploadImageToCloudinary(
       displayPicture,
-      process.env.FOLDER_NAME,
+      getCloudinaryFolder(),
       1000,
       1000
     )
-    console.log(image)
     const updatedProfile = await User.findByIdAndUpdate(
       { _id: userId },
       { image: image.secure_url },
@@ -134,12 +133,12 @@ exports.updateDisplayPicture = async (req, res) => {
     res.send({
       success: true,
       message: `Image Updated successfully`,
-      data: updatedProfile,
+      data: sanitizeUser(updatedProfile),
     })
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Image update failed",
     })
   }
 }
@@ -233,7 +232,7 @@ exports.instructorDashboard = async (req, res) => {
 
     res.status(200).json({ courses: courseData })
   } catch (error) {
-    console.error(error)
+    console.error("Instructor dashboard failed:", error.message)
     res.status(500).json({ message: "Server Error" })
   }
 }

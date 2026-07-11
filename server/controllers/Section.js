@@ -69,14 +69,13 @@ exports.updateSection = async (req, res) => {
         },
       })
       .exec()
-    console.log(course)
     res.status(200).json({
       success: true,
       message: section,
       data: course,
     })
   } catch (error) {
-    console.error("Error updating section:", error)
+    console.error("Section update failed:", error.message)
     res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -95,7 +94,6 @@ exports.deleteSection = async (req, res) => {
       },
     })
     const section = await Section.findById(sectionId)
-    console.log(sectionId, courseId)
     if (!section) {
       return res.status(404).json({
         success: false,
@@ -123,7 +121,7 @@ exports.deleteSection = async (req, res) => {
       data: course,
     })
   } catch (error) {
-    console.error("Error deleting section:", error)
+    console.error("Section deletion failed:", error.message)
     res.status(500).json({
       success: false,
       message: "Internal server error",

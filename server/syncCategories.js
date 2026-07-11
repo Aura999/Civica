@@ -3,9 +3,13 @@ const axios = require("axios");
 const fetchFrom = "https://studynotion-backend-auo1.onrender.com/api/v1/course/showAllCategories";
 const sendTo = "http://localhost:4000/api/v1/course/createCategory";
 
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhdHlhbTIwMDNtYWFudUBnbWFpbC5jb20iLCJpZCI6IjY4NWE1MDYxMmVlZDc3NzljYzU0Yzk4YiIsImlhdCI6MTc1MDgzNzU4MiwiZXhwIjoxNzUwOTIzOTgyfQ.2P7JLutUikqZFbo4TwklyehlVQJ-PiNWViJCyBDMN9w"
+const token = process.env.SYNC_CATEGORIES_TOKEN
 
 const copyCategories = async () => {
+  if (!token) {
+    throw new Error("SYNC_CATEGORIES_TOKEN is not configured");
+  }
+
   try {
     // Step 1: Fetch categories from hosted backend
     const response = await axios.get(fetchFrom);

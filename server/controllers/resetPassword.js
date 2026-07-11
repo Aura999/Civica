@@ -14,7 +14,7 @@ exports.resetPasswordToken = async (req, res) => {
     }
     const token = crypto.randomBytes(20).toString("hex")
 
-    const updatedDetails = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { email: email },
       {
         token: token,
@@ -22,8 +22,6 @@ exports.resetPasswordToken = async (req, res) => {
       },
       { new: true }
     )
-    console.log("DETAILS", updatedDetails)
-
     // const url = `http://localhost:3000/update-password/${token}`
     const url = `https://studynotion-edtech-project.vercel.app/update-password/${token}`
 
@@ -39,8 +37,8 @@ exports.resetPasswordToken = async (req, res) => {
         "Email Sent Successfully, Please Check Your Email to Continue Further",
     })
   } catch (error) {
+    console.error("Reset password email failed:", error.message)
     return res.json({
-      error: error.message,
       success: false,
       message: `Some Error in Sending the Reset Message`,
     })
@@ -81,8 +79,8 @@ exports.resetPassword = async (req, res) => {
       message: `Password Reset Successful`,
     })
   } catch (error) {
+    console.error("Password reset failed:", error.message)
     return res.json({
-      error: error.message,
       success: false,
       message: `Some Error in Updating the Password`,
     })

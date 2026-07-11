@@ -8,12 +8,20 @@ const {
   sendPaymentSuccessEmail,
 } = require("../controllers/payments")
 const { auth, isInstructor, isStudent, isAdmin } = require("../middleware/auth")
-router.post("/capturePayment", auth, isStudent, capturePayment)
-router.post("/verifyPayment", auth, isStudent, verifyPayment)
+const validate = require("../middleware/validate")
+const {
+  capturePaymentSchema,
+  verifyPaymentSchema,
+  paymentSuccessEmailSchema,
+} = require("../validations/payment.validation")
+
+router.post("/capturePayment", auth, isStudent, validate(capturePaymentSchema), capturePayment)
+router.post("/verifyPayment", auth, isStudent, validate(verifyPaymentSchema), verifyPayment)
 router.post(
   "/sendPaymentSuccessEmail",
   auth,
   isStudent,
+  validate(paymentSuccessEmailSchema),
   sendPaymentSuccessEmail
 )
 // router.post("/verifySignature", verifySignature)

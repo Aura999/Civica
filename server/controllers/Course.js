@@ -8,6 +8,7 @@ const User = require("../models/User")
 const { uploadImageToCloudinary } = require("../utils/imageUploader")
 const CourseProgress = require("../models/CourseProgress")
 const { convertSecondsToDuration } = require("../utils/secToDuration")
+const { getCloudinaryFolder } = require("../config/env")
 // Function to create a new course
 exports.createCourse = async (req, res) => {
   try {
@@ -31,10 +32,6 @@ exports.createCourse = async (req, res) => {
     // Convert the tag and instructions from stringified Array to Array
     
     const instructions = JSON.parse(_instructions)
-
-    console.log(thumbnail)
-    
-    console.log("instructions", instructions)
 
     // Check if any of the required fields are missing
     if (
@@ -77,9 +74,8 @@ exports.createCourse = async (req, res) => {
     // Upload the Thumbnail to Cloudinary
     const thumbnailImage = await uploadImageToCloudinary(
       thumbnail,
-      process.env.FOLDER_NAME
+      getCloudinaryFolder()
     )
-    console.log(thumbnailImage)
     // Create a new course with the given details
     const newCourse = await Course.create({
       courseName,
@@ -106,7 +102,7 @@ exports.createCourse = async (req, res) => {
       { new: true }
     )
     // Add the new course to the Categories
-    const categoryDetails2 = await Category.findByIdAndUpdate(
+    await Category.findByIdAndUpdate(
       { _id: category },
       {
         $push: {
@@ -115,7 +111,6 @@ exports.createCourse = async (req, res) => {
       },
       { new: true }
     )
-    console.log("HEREEEEEEEE", categoryDetails2)
     // Return the new course and a success message
     res.status(200).json({
       success: true,
@@ -124,7 +119,7 @@ exports.createCourse = async (req, res) => {
     })
   } catch (error) {
     // Handle any errors that occur during the creation of the course
-    console.error(error)
+    console.error("Course creation failed:", error.message)
     res.status(500).json({
       success: false,
       message: "Failed to create course",
@@ -145,11 +140,10 @@ exports.editCourse = async (req, res) => {
 
     // If Thumbnail Image is found, update it
     if (req.files) {
-      console.log("thumbnail update")
       const thumbnail = req.files.thumbnailImage
       const thumbnailImage = await uploadImageToCloudinary(
         thumbnail,
-        process.env.FOLDER_NAME
+        getCloudinaryFolder()
       )
       course.thumbnail = thumbnailImage.secure_url
     }
@@ -192,7 +186,7 @@ exports.editCourse = async (req, res) => {
       data: updatedCourse,
     })
   } catch (error) {
-    console.error(error)
+    console.error("Course update failed:", error.message)
     res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -222,7 +216,7 @@ exports.getAllCourses = async (req, res) => {
       data: allCourses,
     })
   } catch (error) {
-    console.log(error)
+    console.error("Course list fetch failed:", error.message)
     return res.status(404).json({
       success: false,
       message: `Can't Fetch Course Data`,
@@ -371,7 +365,6 @@ exports.getFullCourseDetails = async (req, res) => {
       userId: userId,
     })
 
-    console.log("courseProgressCount : ", courseProgressCount)
 
     if (!courseDetails) {
       return res.status(400).json({
@@ -432,7 +425,7 @@ exports.getInstructorCourses = async (req, res) => {
       data: instructorCourses,
     })
   } catch (error) {
-    console.error(error)
+    console.error("Instructor course fetch failed:", error.message)
     res.status(500).json({
       success: false,
       message: "Failed to retrieve instructor courses",
@@ -483,7 +476,7 @@ exports.deleteCourse = async (req, res) => {
       message: "Course deleted successfully",
     })
   } catch (error) {
-    console.error(error)
+    console.error("Course deletion failed:", error.message)
     return res.status(500).json({
       success: false,
       message: "Server error",
